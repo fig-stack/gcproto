@@ -4,10 +4,11 @@
 
 #define MAX_CONNECTIONS 10
 
+/* Reference count (ref_count) = p(v) */
 struct Node {
   char *name;
   bool is_root;
-  int ref_count;
+  int ref_count; 
   struct Node *points_to[MAX_CONNECTIONS];
   size_t n_points_to;
   struct Node *pointed_by[MAX_CONNECTIONS];
@@ -34,6 +35,7 @@ void new_connection(struct Node *from, struct Node *to) {
   }
 }
 
+/* p(v) will print 0 if it's a dead object and >0 if not. */
 void print_node_info(struct Node *node) {
   printf("Node %s\n", node->name);
   printf("Is root? %s\n", node->is_root ? "Yes" : "No");
@@ -48,7 +50,7 @@ void print_node_info(struct Node *node) {
     }
   }
   printf("\n");
-
+  
   printf("Pointed by: ");
   if (node->n_pointed_by == 0) {
     printf("no connections :(");
