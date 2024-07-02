@@ -35,6 +35,15 @@ void new_connection(struct Node *from, struct Node *to) {
   }
 }
 
+/* If n is the array size, this function "creats" a duplicate of array[n] on array[n-1] 
+   and decreases the index so we can't access it.
+   If we decide to add another connection, it overwrites that position where the duplicate node is.
+   Example: 
+   We have this array of points_to of some node x and we want to remove C.
+   [A, C, D, E]
+   After the algorithm the array should look like this:
+   [A, D, E, E]
+*/ 
 void remove_connection(struct Node *from, struct Node *to) {
   for (int i = 0; i < from->n_points_to; i++) {
     if (from->points_to[i] == to) {
@@ -98,7 +107,6 @@ void calculate_ref_count(struct Node *node) {
 }
 
 int main() {
-
   struct Node *A = create_node("A", true);
   struct Node *B = create_node("B", false);
   struct Node *C = create_node("C", false);
