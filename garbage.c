@@ -8,7 +8,7 @@
 struct Node {
   char *name;
   bool is_root;
-  int ref_count; 
+  int ref_count;
   struct Node *points_to[MAX_CONNECTIONS];
   size_t n_points_to;
   struct Node *pointed_by[MAX_CONNECTIONS];
@@ -35,35 +35,66 @@ void new_connection(struct Node *from, struct Node *to) {
   }
 }
 
+void remove_connection(struct Node *from, struct Node *to) {
+  for (int i = 0; i < from->n_points_to; i++) {
+    if (from->points_to[i] == to) {
+      for (int j = i; j < from->n_points_to - 1; j++) {
+        from->points_to[j] = from->points_to[j + 1];
+      }
+      from->n_points_to--;
+      break;
+    }
+  }
+
+  for (int i = 0; i < to->n_pointed_by; i++) {
+    if (to->pointed_by[i] == from) {
+      for (int j = i; j < to->n_pointed_by - 1; j++) {
+        to->pointed_by[j] = to->pointed_by[j + 1];
+      }
+      to->n_pointed_by--;
+      break;
+    }
+  }
+}
+
 /* p(v) will print 0 if it's a dead object and >0 if not. */
 void print_node_info(struct Node *node) {
-  printf("Node %s\n", node->name);
-  printf("Is root? %s\n", node->is_root ? "Yes" : "No");
-  printf("p(%s): %d\n", node->name, node->ref_count);
+  if (node) {
+    printf("Node %s\n", node->name);
+    printf("Is root? %s\n", node->is_root ? "Yes" : "No");
 
-  printf("Points to: ");
-  if (node->n_points_to == 0) {
-    printf("no connections :(");
-  } else {
-    for (size_t i = 0; i < node->n_points_to; i++) {
-      printf("(%s) ", node->points_to[i]->name);
+    printf("p(%s): %d\n", node->name, node->ref_count);
+
+    printf("Points to: ");
+    if (node->n_points_to == 0) {
+      printf("no connections");
+    } else {
+      for (size_t i = 0; i < node->n_points_to; i++) {
+        printf("(%s) ", node->points_to[i]->name);
+      }
     }
-  }
-  printf("\n");
-  
-  printf("Pointed by: ");
-  if (node->n_pointed_by == 0) {
-    printf("no connections :(");
-  } else {
-    for (size_t i = 0; i < node->n_pointed_by; i++) {
-      printf("(%s) ", node->pointed_by[i]->name);
+    printf("\n");
+
+    printf("Pointed by: ");
+    if (node->n_pointed_by == 0) {
+      printf("no connections");
+    } else {
+      for (size_t i = 0; i < node->n_pointed_by; i++) {
+        printf("(%s) ", node->pointed_by[i]->name);
+      }
     }
+    printf("\n\n");
+  } else {
+    fprintf(stderr, "Node doesn't exist\n");
   }
-  printf("\n\n");
 }
 
 void calculate_ref_count(struct Node *node) {
-  node->ref_count = (node->is_root ? 1 : 0) + node->n_pointed_by;
+  if (node) {
+    node->ref_count = (node->is_root ? 1 : 0) + node->n_pointed_by;
+  } else {
+    fprintf(stderr, "Node doesn't exist");
+  }
 }
 
 int main() {
@@ -76,11 +107,14 @@ int main() {
   new_connection(A, B);
   new_connection(B, C);
   new_connection(B, A);
+  
+  remove_connection(B,C);
 
   calculate_ref_count(A);
   calculate_ref_count(B);
   calculate_ref_count(C);
   calculate_ref_count(D);
+
 
   print_node_info(A);
   print_node_info(B);
