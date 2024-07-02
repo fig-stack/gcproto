@@ -45,9 +45,9 @@ void new_connection(struct Node *from, struct Node *to) {
    [A, D, E, E]
 */ 
 void remove_connection(struct Node *from, struct Node *to) {
-  for (int i = 0; i < from->n_points_to; i++) {
+  for (size_t i = 0; i < from->n_points_to; i++) {
     if (from->points_to[i] == to) {
-      for (int j = i; j < from->n_points_to - 1; j++) {
+      for (size_t j = i; j < from->n_points_to - 1; j++) {
         from->points_to[j] = from->points_to[j + 1];
       }
       from->n_points_to--;
@@ -55,9 +55,9 @@ void remove_connection(struct Node *from, struct Node *to) {
     }
   }
 
-  for (int i = 0; i < to->n_pointed_by; i++) {
+  for (size_t i = 0; i < to->n_pointed_by; i++) {
     if (to->pointed_by[i] == from) {
-      for (int j = i; j < to->n_pointed_by - 1; j++) {
+      for (size_t j = i; j < to->n_pointed_by - 1; j++) {
         to->pointed_by[j] = to->pointed_by[j + 1];
       }
       to->n_pointed_by--;
